@@ -1,17 +1,11 @@
-import os
-
 import pygame
 from settings import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        image_path = os.path.join('zdjecia', 'rycerz.png')
-
-        self.original_image = pygame.image.load(image_path).convert_alpha()
-
-        self.image = pygame.transform.scale(self.original_image, (50, 50))
-
+        self.image = pygame.Surface((50, 50))
+        self.image.fill(BLUE)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = 5
