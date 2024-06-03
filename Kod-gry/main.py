@@ -1,27 +1,36 @@
 import pygame
 import sys
 import random
-from settings import WIDTH, HEIGHT, FPS, BLACK  # Importowanie stałych z pliku settings
-from player import Player
+from settings import WIDTH, HEIGHT, FPS, BLACK
+from player import Player, Player2, Player3, Player4
 from enemy import Enemy
+from menu import Menu
 
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))  # Poprawka na set_mode
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Vampire Survivors Clone")
         self.clock = pygame.time.Clock()
         self.running = True
+        self.character = Player
 
+        self.menu = Menu(self)
+        self.menu.run()
+
+        if self.running:
+            self.new_game()
+
+    def new_game(self):
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
 
-        self.player = Player(WIDTH // 2, HEIGHT // 2)
+        self.player = self.character(WIDTH // 2, HEIGHT // 2)
         self.all_sprites.add(self.player)
 
         for _ in range(10):
             enemy = Enemy(random.randint(0, WIDTH), random.randint(0, HEIGHT))
-            self.all_sprites.add(enemy)  # Poprawka na all_sprites
+            self.all_sprites.add(enemy)
             self.enemies.add(enemy)
 
     def run(self):
@@ -37,16 +46,16 @@ class Game:
                 self.running = False
 
     def update(self):
-        self.all_sprites.update()  # Poprawka na all_sprites
+        self.all_sprites.update()
 
-        # Sprawdzanie kolizji między graczem a przeciwnikami
+
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
         if hits:
-            self.running = False  # Zatrzymanie gry po kolizji
+            self.running = False
 
     def draw(self):
         self.screen.fill(BLACK)
-        self.all_sprites.draw(self.screen)  # Poprawka na all_sprites
+        self.all_sprites.draw(self.screen)
         pygame.display.flip()
 
     def quit(self):
@@ -55,5 +64,6 @@ class Game:
 
 if __name__ == "__main__":
     game = Game()
-    game.run()
+    if game.running:
+        game.run()
     game.quit()

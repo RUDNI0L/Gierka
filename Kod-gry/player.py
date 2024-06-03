@@ -26,3 +26,20 @@ class Player(pygame.sprite.Sprite):
             self.rect.y -= self.speed
         if keys[pygame.K_DOWN]:
             self.rect.y += self.speed
+
+
+
+class Player2(Player):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.image.fill(RED)
+
+class Player3(Player):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.image.fill(GREEN)
+
+class Player4(Player):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.image.fill(RED)
