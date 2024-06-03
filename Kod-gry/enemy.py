@@ -1,12 +1,21 @@
+import os
+
 import pygame
 from settings import *
 import random
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((40, 40))
-        self.image.fill(RED)
+        # Ścieżka do obrazu
+        image_path = os.path.join('zdjecia', 'zombie.png')
+
+        # Załaduj obraz
+        self.original_image = pygame.image.load(image_path).convert_alpha()
+
+        # Skalowanie obrazu do mniejszych rozmiarów
+        self.image = pygame.transform.scale(self.original_image, (50, 50))  # Zmień wymiary zgodnie z potrzebą
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = 2
