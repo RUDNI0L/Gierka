@@ -3,10 +3,11 @@ import os
 import pygame
 from settings import *
 import random
+from player import Player, Player2, Player3, Player4
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, target):
         super().__init__()
         image_path = os.path.join('zdjecia', 'zombie.png')
         self.original_image = pygame.image.load(image_path).convert_alpha()
@@ -14,7 +15,10 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = 2
+        self.target = target
 
     def update(self):
-        self.rect.x += random.choice([-1, 1]) * self.speed
-        self.rect.y += random.choice([-1, 1]) * self.speed
+        direction = pygame.Vector2(self.target.rect.center) - pygame.Vector2(self.rect.center)
+        if direction.length() > 0:  # Uniknięcie dzielenia przez zero
+            direction = direction.normalize() * self.speed
+        self.rect.move_ip(direction)

@@ -42,14 +42,13 @@ class Game:
     def new_game(self):
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
-
         self.player = self.character(WIDTH // 2, HEIGHT // 2)
         self.all_sprites.add(self.player)
-
         for _ in range(10):
-            enemy = Enemy(random.randint(0, WIDTH), random.randint(0, HEIGHT))
+            enemy = Enemy(random.randint(0, WIDTH), random.randint(0, HEIGHT), self.player)
             self.all_sprites.add(enemy)
             self.enemies.add(enemy)
+
 
     def run(self):
         while self.running:
@@ -69,6 +68,7 @@ class Game:
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
         if hits:
             self.running = False
+
 
     def draw(self):
         for x in range(0, WIDTH, self.background.get_width()):

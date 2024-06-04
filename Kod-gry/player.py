@@ -32,14 +32,31 @@ class Player(pygame.sprite.Sprite):
 class Player2(Player):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.image.fill(RED)
+        image_path = os.path.join('zdjecia', 'rycerz.png')
+
+        self.original_image = pygame.image.load(image_path).convert_alpha()
+
+        self.image = pygame.transform.scale(self.original_image, (50, 50))
+
+
 
 class Player3(Player):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.image.fill(GREEN)
+        image_path = os.path.join('zdjecia', 'rycerz.png')
+
+        self.original_image = pygame.image.load(image_path).convert_alpha()
+
+        self.image = pygame.transform.scale(self.original_image, (50, 50))
+
+
 
 class Player4(Player):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.image.fill(RED)
+        image_path = os.path.join('zdjecia', 'rycerz.png')
+
+        self.original_image = pygame.image.load(image_path).convert_alpha()
+
+        self.image = pygame.transform.scale(self.original_image, (50, 50))
+
