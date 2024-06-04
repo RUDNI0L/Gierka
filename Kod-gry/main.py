@@ -5,7 +5,9 @@ from settings import WIDTH, HEIGHT, FPS, BLACK
 from player import Player, Player2, Player3, Player4
 from enemy import Enemy
 from menu import Menu
+from bullet import Bullet
 
+SHOOT_EVENT = pygame.USEREVENT + 1
 
 class Game:
     def __init__(self):
@@ -49,6 +51,7 @@ class Game:
             self.all_sprites.add(enemy)
             self.enemies.add(enemy)
 
+        pygame.time.set_timer(SHOOT_EVENT, 500)
 
     def run(self):
         while self.running:
@@ -57,10 +60,15 @@ class Game:
             self.update()
             self.draw()
 
+        self.quit()
+
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            elif event.type == SHOOT_EVENT:
+                bullet = Bullet(self.player.rect.centerx, self.player.rect.centery, target=random.choice(self.enemies.sprites()))
+                self.all_sprites.add(bullet)
 
     def update(self):
         self.all_sprites.update()
@@ -68,7 +76,6 @@ class Game:
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
         if hits:
             self.running = False
-
 
     def draw(self):
         for x in range(0, WIDTH, self.background.get_width()):
