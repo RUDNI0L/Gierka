@@ -18,11 +18,24 @@ class Game:
         self.menu = Menu(self)
         self.menu.run()
 
-        # Inicjalizacja Pygame Mixer i załadowanie muzyki
         pygame.mixer.init()
-        pygame.mixer.music.load('muzyka/muzyka1.mp3')
-        pygame.mixer.music.set_volume(0.01)
-        pygame.mixer.music.play(-1)
+
+        self.music_files = ['muzyka/muzyka1.mp3', 'muzyka/muzyka2.mp3', 'muzyka/muzyka3.mp3']
+
+        self.play_random_music()
+
+        if self.running:
+            self.new_game()
+
+    def play_random_music(self):
+        try:
+            selected_music = random.choice(self.music_files)
+            pygame.mixer.music.load(selected_music)
+            pygame.mixer.music.set_volume(0.01)
+            pygame.mixer.music.play(-1)
+            print(f"Playing: {selected_music}")
+        except pygame.error as e:
+            print(f"Could not load music: {e}")
 
         if self.running:
             self.new_game()
