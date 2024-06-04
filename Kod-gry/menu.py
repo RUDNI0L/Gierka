@@ -15,7 +15,7 @@ class Menu:
         self.font_highlight = pygame.font.Font(None, 75)
         self.stage = "main"  # "main" lub "character"
         self.menu_items = ["Start", "Exit"]
-        self.character_items = ["Rynerz", "Łucznik", "Mag", "Władca"]
+        self.character_items = ["Rycerz", "Łucznik", "Mag", "Władca"]
         self.selected_item = 0
         self.background = pygame.image.load('zdjecia/background2.png').convert()
         desired_width, desired_height = self.screen.get_size()
