@@ -18,6 +18,12 @@ class Game:
         self.menu = Menu(self)
         self.menu.run()
 
+        # Inicjalizacja Pygame Mixer i załadowanie muzyki
+        pygame.mixer.init()
+        pygame.mixer.music.load('muzyka/muzyka1.mp3')
+        pygame.mixer.music.set_volume(0.01)
+        pygame.mixer.music.play(-1)
+
         if self.running:
             self.new_game()
 
@@ -47,7 +53,6 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
-
 
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
         if hits:
