@@ -17,6 +17,14 @@ class Menu:
         self.menu_items = ["Start", "Exit"]
         self.character_items = ["Rynerz", "Łucznik", "Mag", "Władca"]
         self.selected_item = 0
+        self.background = pygame.image.load('zdjecia/background2.png').convert()
+        desired_width, desired_height = self.screen.get_size()
+        self.background = pygame.transform.scale(self.background, (desired_width, desired_height))
+        pygame.mixer.init()
+        pygame.mixer.music.load('muzyka/menu.mp3')
+        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.play(-1)
+
 
         # Load character images
         self.character_images = [
@@ -27,6 +35,8 @@ class Menu:
         ]
     def draw(self):
         self.screen.fill(BLACK)
+        self.screen.blit(self.background, (0, 0))
+
         if self.stage == "main":
             for idx, item in enumerate(self.menu_items):
                 if idx == self.selected_item:
