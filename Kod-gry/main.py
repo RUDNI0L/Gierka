@@ -6,6 +6,7 @@ from player import Player, Player2, Player3, Player4
 from enemy import Enemy
 from menu import Menu
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -21,8 +22,10 @@ class Game:
         pygame.mixer.init()
 
         self.music_files = ['muzyka/muzyka1.mp3', 'muzyka/muzyka2.mp3', 'muzyka/muzyka3.mp3']
-
+        pygame.mixer.music.set_volume(0.01)
         self.play_random_music()
+
+        self.background = pygame.image.load('zdjecia/background.jpg').convert()
 
         if self.running:
             self.new_game()
@@ -31,14 +34,10 @@ class Game:
         try:
             selected_music = random.choice(self.music_files)
             pygame.mixer.music.load(selected_music)
-            pygame.mixer.music.set_volume(0.01)
             pygame.mixer.music.play(-1)
             print(f"Playing: {selected_music}")
         except pygame.error as e:
             print(f"Could not load music: {e}")
-
-        if self.running:
-            self.new_game()
 
     def new_game(self):
         self.all_sprites = pygame.sprite.Group()
@@ -72,13 +71,17 @@ class Game:
             self.running = False
 
     def draw(self):
-        self.screen.fill(BLACK)
+        for x in range(0, WIDTH, self.background.get_width()):
+            for y in range(0, HEIGHT, self.background.get_height()):
+                self.screen.blit(self.background, (x, y))
+
         self.all_sprites.draw(self.screen)
         pygame.display.flip()
 
     def quit(self):
         pygame.quit()
         sys.exit()
+
 
 if __name__ == "__main__":
     game = Game()
