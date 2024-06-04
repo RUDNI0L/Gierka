@@ -28,14 +28,14 @@ class Player2(Player):
         super().__init__(x, y)
         image_path = os.path.join('zdjecia', 'lucznik.png')
         self.original_image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(self.original_image, (50, 50))
+        self.image = pygame.transform.scale(self.original_image, (80, 80))
 
 class Player3(Player):
     def __init__(self, x, y):
         super().__init__(x, y)
         image_path = os.path.join('zdjecia', 'mag.png')
         self.original_image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(self.original_image, (50, 50))
+        self.image = pygame.transform.scale(self.original_image, (120, 120))
 
 class Player4(Player):
     def __init__(self, x, y):

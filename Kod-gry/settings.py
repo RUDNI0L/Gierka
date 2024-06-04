@@ -1,5 +1,5 @@
 # Ustawienia gry
-WIDTH, HEIGHT = 1600, 1280
+WIDTH, HEIGHT = 1920, 1080
 FPS = 60
 
 # Kolory

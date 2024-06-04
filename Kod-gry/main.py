@@ -44,6 +44,7 @@ class Game:
     def new_game(self):
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
+        self.bullets = pygame.sprite.Group()
         self.player = self.character(WIDTH // 2, HEIGHT // 2)
         self.all_sprites.add(self.player)
         for _ in range(10):
@@ -51,7 +52,7 @@ class Game:
             self.all_sprites.add(enemy)
             self.enemies.add(enemy)
 
-        pygame.time.set_timer(SHOOT_EVENT, 500)
+        pygame.time.set_timer(SHOOT_EVENT, 1000)
 
     def run(self):
         while self.running:
@@ -69,9 +70,14 @@ class Game:
             elif event.type == SHOOT_EVENT:
                 bullet = Bullet(self.player.rect.centerx, self.player.rect.centery, target=random.choice(self.enemies.sprites()))
                 self.all_sprites.add(bullet)
-
+                self.bullets.add(bullet)
     def update(self):
         self.all_sprites.update()
+
+        for bullet in self.bullets:
+            hits = pygame.sprite.spritecollide(bullet, self.enemies, True)
+            if hits:
+                bullet.kill()
 
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
         if hits:

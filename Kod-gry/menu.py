@@ -29,9 +29,9 @@ class Menu:
         # Load character images
         self.character_images = [
             pygame.transform.scale(pygame.image.load(os.path.join("zdjecia", "rycerz.png")), (64, 64)),
-            pygame.transform.scale(pygame.image.load(os.path.join("zdjecia", "zombie.png")), (64, 64)),
-            pygame.transform.scale(pygame.image.load(os.path.join("zdjecia", "rycerz.png")), (64, 64)),
-            pygame.transform.scale(pygame.image.load(os.path.join("zdjecia", "rycerz.png")), (64, 64)),
+            pygame.transform.scale(pygame.image.load(os.path.join("zdjecia", "lucznik.png")), (100, 100)),
+            pygame.transform.scale(pygame.image.load(os.path.join("zdjecia", "mag.png")), (150, 150)),
+            pygame.transform.scale(pygame.image.load(os.path.join("zdjecia", "wladca.png")), (64, 64)),
         ]
     def draw(self):
         self.screen.fill(BLACK)
