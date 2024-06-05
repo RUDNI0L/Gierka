@@ -48,11 +48,27 @@ class Game:
         self.player = self.character(WIDTH // 2, HEIGHT // 2)
         self.all_sprites.add(self.player)
         for _ in range(10):
-            enemy = Enemy(random.randint(0, WIDTH), random.randint(0, HEIGHT), self.player)
+            enemy = self.spawn_enemy()
             self.all_sprites.add(enemy)
             self.enemies.add(enemy)
 
         pygame.time.set_timer(SHOOT_EVENT, 1000)
+
+    def spawn_enemy(self):
+        spawn_position = random.choice(['top', 'bottom', 'left', 'right'])
+        if spawn_position == 'top':
+            x = random.randint(-50, WIDTH + 50)
+            y = -50
+        elif spawn_position == 'bottom':
+            x = random.randint(-50, WIDTH + 50)
+            y = HEIGHT + 50
+        elif spawn_position == 'left':
+            x = -50
+            y = random.randint(-50, HEIGHT + 50)
+        elif spawn_position == 'right':
+            x = WIDTH + 50
+            y = random.randint(-50, HEIGHT + 50)
+        return Enemy(x, y, self.player)
 
     def run(self):
         while self.running:
