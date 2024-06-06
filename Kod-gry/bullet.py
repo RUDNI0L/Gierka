@@ -3,15 +3,16 @@ import math
 import os
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, target=None):
+    def __init__(self, x, y, target=None, damage=10):
         super().__init__()
         image_path = os.path.join('zdjecia', 'zombie.png')
         self.original_image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(self.original_image, (20, 20))  # Dostosuj rozmiar
+        self.image = pygame.transform.scale(self.original_image, (20, 20))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = 8
         self.target = target
+        self.damage = damage
 
     def update(self):
         if self.target:
