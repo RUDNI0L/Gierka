@@ -3,7 +3,7 @@ import sys
 import random
 from settings import WIDTH, HEIGHT, FPS, BLACK
 from player import Player, Player2, Player3, Player4
-from enemy import Enemy
+from enemy import Zombie, Skeleton
 from menu import Menu
 from bullet import Bullet
 
@@ -47,7 +47,7 @@ class Game:
         self.bullets = pygame.sprite.Group()
         self.player = self.character(WIDTH // 2, HEIGHT // 2)
         self.all_sprites.add(self.player)
-        for _ in range(10):
+        for _ in range(1):
             enemy = self.spawn_enemy()
             self.all_sprites.add(enemy)
             self.enemies.add(enemy)
@@ -68,7 +68,7 @@ class Game:
         elif spawn_position == 'right':
             x = WIDTH + 50
             y = random.randint(-50, HEIGHT + 50)
-        return Enemy(x, y, self.player)
+        return Zombie(x, y, self.player)
 
     def run(self):
         while self.running:
@@ -84,19 +84,28 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == SHOOT_EVENT:
-                bullet = Bullet(self.player.rect.centerx, self.player.rect.centery, target=random.choice(self.enemies.sprites()))
-                self.all_sprites.add(bullet)
-                self.bullets.add(bullet)
+                if self.enemies:
+                    bullet = Bullet(self.player.rect.centerx, self.player.rect.centery, target=random.choice(self.enemies.sprites()))
+                    self.all_sprites.add(bullet)
+                    self.bullets.add(bullet)
+
     def update(self):
         self.all_sprites.update()
 
+        # kolizja pocisk-wrog
         for bullet in self.bullets:
-            hits = pygame.sprite.spritecollide(bullet, self.enemies, True)
-            if hits:
+            hits = pygame.sprite.spritecollide(bullet, self.enemies, False)
+            for hit in hits:
+                hit.take_damage(bullet.damage)
                 bullet.kill()
 
+        # kolizja
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
-        if hits:
+        for enemy in hits:
+            if enemy.can_attack():
+                self.player.take_damage(enemy.damage)
+
+        if self.player.hp <= 0:
             self.running = False
 
     def draw(self):
@@ -110,7 +119,6 @@ class Game:
     def quit(self):
         pygame.quit()
         sys.exit()
-
 
 if __name__ == "__main__":
     game = Game()
