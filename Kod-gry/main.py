@@ -5,9 +5,10 @@ from settings import WIDTH, HEIGHT, FPS, BLACK
 from player import Player, Player2, Player3, Player4
 from enemy import Zombie, Skeleton
 from menu import Menu
-from bullet import Bullet
+from bullet import Bullet, OrbitingBullet, StraightShootingBullet
 
 SHOOT_EVENT = pygame.USEREVENT + 1
+
 
 class Game:
     def __init__(self):
@@ -16,7 +17,7 @@ class Game:
         pygame.display.set_caption("Vampire Survivors Clone")
         self.clock = pygame.time.Clock()
         self.running = True
-        self.character = Player
+        self.character = Player  # Możesz ustawić domyślną postać tutaj
 
         self.menu = Menu(self)
         self.menu.run()
@@ -45,8 +46,11 @@ class Game:
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
-        self.player = self.character(WIDTH // 2, HEIGHT // 2)
+
+        # Inicjalizacja gracza z grupą pocisków
+        self.player = self.character(WIDTH // 2, HEIGHT // 2, self.bullets)
         self.all_sprites.add(self.player)
+
         for _ in range(1):
             enemy = self.spawn_enemy()
             self.all_sprites.add(enemy)
@@ -84,13 +88,32 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == SHOOT_EVENT:
-                if self.enemies:
-                    bullet = Bullet(self.player.rect.centerx, self.player.rect.centery, target=random.choice(self.enemies.sprites()))
-                    self.all_sprites.add(bullet)
-                    self.bullets.add(bullet)
+                if isinstance(self.player, Player3):
+                    self.player.create_orbiting_bullet()
+                elif isinstance(self.player, Player2):
+                    target = random.choice(self.enemies.sprites())
+                    self.player.shoot(target)
+                elif isinstance(self.player, Player4):
+                    if self.enemies:
+                        target = random.choice(self.enemies.sprites())
+                        self.player.shoot(target)
+
+        keys = pygame.key.get_pressed()
+        if isinstance(self.player, Player):
+            if keys[pygame.K_UP]:
+                self.player.shoot("up")
+            elif keys[pygame.K_DOWN]:
+                self.player.shoot("down")
+            elif keys[pygame.K_LEFT]:
+                self.player.shoot("left")
+            elif keys[pygame.K_RIGHT]:
+                self.player.shoot("right")
+            else:
+                self.player.shoot()
 
     def update(self):
         self.all_sprites.update()
+        self.bullets.update()
 
         # kolizja pocisk-wrog
         for bullet in self.bullets:
@@ -99,7 +122,7 @@ class Game:
                 hit.take_damage(bullet.damage)
                 bullet.kill()
 
-        # kolizja
+        # kolizja gracz-wrog
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
         for enemy in hits:
             if enemy.can_attack():
@@ -114,11 +137,13 @@ class Game:
                 self.screen.blit(self.background, (x, y))
 
         self.all_sprites.draw(self.screen)
+        self.bullets.draw(self.screen)
         pygame.display.flip()
 
     def quit(self):
         pygame.quit()
         sys.exit()
+
 
 if __name__ == "__main__":
     game = Game()
