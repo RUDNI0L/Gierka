@@ -86,7 +86,6 @@ class Game:
         current_time = time.time()
         if current_time - self.last_enemy_increase_time >= self.enemy_increase_interval:
             self.last_enemy_increase_time = current_time
-            print("Increased number of enemies!")
             self.enemy_increase_amount += 5  # Zwiększ liczbę wrogów o 5
             for _ in range(self.enemy_increase_amount):
                 enemy = self.spawn_enemy()
