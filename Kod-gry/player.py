@@ -52,7 +52,7 @@ class PlayerBase(pygame.sprite.Sprite):
         print("9")
 
     def boss_fight(self):
-        print("Boss")
+        print("boss")
 
     def take_damage(self, damage):
         self.hp -= damage
