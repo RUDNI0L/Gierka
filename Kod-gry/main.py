@@ -4,7 +4,7 @@ import random
 import time
 from settings import WIDTH, HEIGHT, FPS, BLACK
 from player import Player, Player2, Player3, Player4
-from enemy import Zombie, Skeleton
+from enemy import Zombie, Skeleton, shadow,boss
 from menu import Menu
 from bullet import Bullet, OrbitingBullet, StraightShootingBullet
 import math
@@ -33,30 +33,6 @@ class Experience(pygame.sprite.Sprite):
             dir_y /= distance
             self.rect.x += dir_x * self.speed
             self.rect.y += dir_y * self.speed
-
-class Experience(pygame.sprite.Sprite):
-    def __init__(self, x, y, player):
-        super().__init__()
-        self.image = pygame.Surface((20, 20))
-        self.image.fill((0, 255, 0))
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.speed = 3
-        self.player = player  # Przechowujemy obiekt player
-
-    def update(self):
-        dir_x = self.player.rect.centerx - self.rect.centerx
-        dir_y = self.player.rect.centery - self.rect.centery
-        distance = math.hypot(dir_x, dir_y)
-        if distance < 5:
-            self.player.gain_exp(10)
-            self.kill()
-        else:
-            dir_x /= distance
-            dir_y /= distance
-            self.rect.x += dir_x * self.speed
-            self.rect.y += dir_y * self.speed
-
 
 class Game:
     def __init__(self):
@@ -128,17 +104,34 @@ class Game:
         elif spawn_position == 'right':
             x = WIDTH + 50
             y = random.randint(-50, HEIGHT + 50)
-        return Zombie(x, y, self.player)
+        return Zombie(x, y, self.player, self.player.level)
+
+    def update_spawn_rate_based_on_level(self):
+        if self.player.level == 1:
+            self.enemy_increase_interval = 4
+        elif self.player.level == 2:
+            self.enemy_increase_interval = 5
+        elif self.player.level == 3:
+            self.enemy_increase_interval = 2
+        elif self.player.level == 4:
+            self.enemy_increase_interval = 3
+        elif self.player.level >= 5:
+            self.enemy_increase_interval = 2
 
     def increase_enemies(self):
         current_time = time.time()
         if current_time - self.last_enemy_increase_time >= self.enemy_increase_interval:
             self.last_enemy_increase_time = current_time
-            self.enemy_increase_amount += 5  # Zwiększ liczbę wrogów o 5
-            for _ in range(self.enemy_increase_amount):
-                enemy = self.spawn_enemy()
-                self.all_sprites.add(enemy)
-                self.enemies.add(enemy)
+
+            # respienie sie mobow od poziomu
+            max_enemies = self.player.level * 10
+
+            if len(self.enemies) < max_enemies:
+                additional_enemies = min(self.enemy_increase_amount, max_enemies - len(self.enemies))
+                for _ in range(additional_enemies):
+                    enemy = self.spawn_enemy()
+                    self.all_sprites.add(enemy)
+                    self.enemies.add(enemy)
 
     def run(self):
         while self.running:
@@ -157,8 +150,9 @@ class Game:
                 if isinstance(self.player, Player3):
                     self.player.create_orbiting_bullet()
                 elif isinstance(self.player, Player2):
-                    target = random.choice(self.enemies.sprites())
-                    self.player.shoot(target)
+                    if self.enemies:
+                        target = random.choice(self.enemies.sprites())
+                        self.player.shoot(target)
                 elif isinstance(self.player, Player4):
                     if self.enemies:
                         target = random.choice(self.enemies.sprites())
@@ -202,7 +196,51 @@ class Game:
         if self.player.hp <= 0:
             self.running = False
 
+        self.check_player_level()
+        self.update_spawn_rate_based_on_level()  # Aktualizuj częstotliwość respienia wrogów
         self.increase_enemies()  # Sprawdź, czy należy zwiększyć ilość wrogów
+
+    def check_player_level(self):
+        if self.player.level == 3:
+            self.spawn_special_enemies(level=3)
+        elif self.player.level == 6:
+            self.spawn_special_enemies(level=6)
+        elif self.player.level == 9:
+            self.spawn_special_enemies(level=9)
+        elif self.player.level == 10:
+            self.spawn_boss()
+
+    def spawn_special_enemies(self, level):
+        max_special_enemies = self.player.level * 15  # dostosowaniue
+        current_special_enemies = len([enemy for enemy in self.enemies if isinstance(enemy, (Skeleton, shadow, boss))])
+
+        if level == 3 and current_special_enemies < max_special_enemies:
+            additional_special_enemies = min(5, max_special_enemies - current_special_enemies)
+            for _ in range(additional_special_enemies):
+                enemy = Skeleton(random.randint(0, WIDTH), random.randint(0, HEIGHT), self.player, level)
+                self.all_sprites.add(enemy)
+                self.enemies.add(enemy)
+        elif level == 6 and current_special_enemies < max_special_enemies:
+            additional_special_enemies = min(5, max_special_enemies - current_special_enemies)
+            for _ in range(additional_special_enemies):
+                enemy = shadow(random.randint(0, WIDTH), random.randint(0, HEIGHT), self.player, level)
+                self.all_sprites.add(enemy)
+                self.enemies.add(enemy)
+        elif level == 9 and current_special_enemies < max_special_enemies:
+            additional_special_enemies = min(5, max_special_enemies - current_special_enemies)
+            for _ in range(additional_special_enemies):
+                enemy = boss(random.randint(0, WIDTH), random.randint(0, HEIGHT), self.player, level)
+                self.all_sprites.add(enemy)
+                self.enemies.add(enemy)
+
+    def spawn_boss(self):
+        if not any(isinstance(enemy, boss) for enemy in self.enemies):
+            boss_enemy = boss(WIDTH // 2, HEIGHT // 2, self.player)
+            self.all_sprites.add(boss_enemy)
+            self.enemies.add(boss_enemy)
+
+    def set_enemy_increase_interval(self, interval):
+        self.enemy_increase_interval = interval
 
     def draw_time(self):
         elapsed_time = int(time.time() - self.start_time)

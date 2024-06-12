@@ -1,10 +1,9 @@
 import os
 import time
-
 import pygame
 
 class EnemyBase(pygame.sprite.Sprite):
-    def __init__(self, x, y, max_hp, damage, image_path, target):
+    def __init__(self, x, y, max_hp, damage, image_path, target, speed=3, attack_delay=1.0):
         super().__init__()
         self.max_hp = max_hp
         self.hp = max_hp
@@ -15,8 +14,8 @@ class EnemyBase(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.last_attack_time = time.time()
-        self.attack_delay = 1.0
-        self.speed = 3
+        self.attack_delay = attack_delay
+        self.speed = speed
 
     def take_damage(self, damage):
         self.hp -= damage
@@ -38,9 +37,25 @@ class EnemyBase(pygame.sprite.Sprite):
         return False
 
 class Zombie(EnemyBase):
-    def __init__(self, x, y, target):
-        super().__init__(x, y, max_hp=50, damage=10, image_path=os.path.join('zdjecia', 'zombie.png'), target=target)
+    def __init__(self, x, y, target, level):
+        max_hp = 50 + level * 10
+        damage = 10 + level * 2
+        super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'zombie.png'), target=target)
 
 class Skeleton(EnemyBase):
-    def __init__(self, x, y, target):
-        super().__init__(x, y, max_hp=30, damage=15, image_path=os.path.join('zdjecia', 'skeleton.png'), target=target)
+    def __init__(self, x, y, target, level):
+        max_hp = 30 + level * 8
+        damage = 15 + level * 3
+        super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'rycerz.png'), target=target)
+
+class shadow(EnemyBase):
+    def __init__(self, x, y, target, level):
+        max_hp = 30 + level * 6
+        damage = 15 + level * 4
+        super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'rycerz.png'), target=target)
+
+class boss(EnemyBase):
+    def __init__(self, x, y, target, level):
+        max_hp = 100 + level * 20
+        damage = 20 + level * 5
+        super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'zombie.png'), target=target)

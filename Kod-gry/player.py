@@ -43,6 +43,7 @@ class PlayerBase(pygame.sprite.Sprite):
             self.boss_fight()
 
     def special_event_3(self):
+
         print("3")
 
     def special_event_6(self):
