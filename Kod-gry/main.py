@@ -7,9 +7,32 @@ from player import Player, Player2, Player3, Player4
 from enemy import Zombie, Skeleton
 from menu import Menu
 from bullet import Bullet, OrbitingBullet, StraightShootingBullet
+import math
 
 SHOOT_EVENT = pygame.USEREVENT + 1
 
+class Experience(pygame.sprite.Sprite):
+    def __init__(self, x, y, player):
+        super().__init__()
+        self.image = pygame.Surface((20, 20))
+        self.image.fill((0, 255, 0))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.speed = 3
+        self.player = player  # Przechowujemy obiekt player
+
+    def update(self):
+        dir_x = self.player.rect.centerx - self.rect.centerx
+        dir_y = self.player.rect.centery - self.rect.centery
+        distance = math.hypot(dir_x, dir_y)
+        if distance < 5:
+            self.player.gain_exp(10)
+            self.kill()
+        else:
+            dir_x /= distance
+            dir_y /= distance
+            self.rect.x += dir_x * self.speed
+            self.rect.y += dir_y * self.speed
 
 class Game:
     def __init__(self):
@@ -54,6 +77,7 @@ class Game:
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
+        self.exp = pygame.sprite.Group()
 
         # Inicjalizacja gracza z grupą pocisków
         self.player = self.character(WIDTH // 2, HEIGHT // 2, self.bullets)
@@ -139,6 +163,11 @@ class Game:
             for hit in hits:
                 hit.take_damage(bullet.damage)
                 bullet.kill()
+                if hit.hp <= 0:  # jak wrog zabity
+                    exp_orb = Experience(hit.rect.centerx, hit.rect.centery, self.player)  # Przekazujemy player
+                    self.all_sprites.add(exp_orb)
+                    self.exp.add(exp_orb)
+                    hit.kill()
 
         # kolizja gracz-wrog
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
@@ -157,6 +186,13 @@ class Game:
         text = font.render(f"Time: {elapsed_time}", True, (255, 255, 255))
         self.screen.blit(text, (WIDTH - 150, HEIGHT - 50))
 
+    def draw_xp(self):
+        font = pygame.font.Font(None, 36)
+        xp_text = font.render(f"XP: {self.player.exp}/{self.player.exp_to_next_level}", True, (255, 255, 255))
+        level_text = font.render(f"Level: {self.player.level}", True, (255, 255, 255))
+        self.screen.blit(xp_text, (10, 10))
+        self.screen.blit(level_text, (10, 50))
+
     def draw(self):
         for x in range(0, WIDTH, self.background.get_width()):
             for y in range(0, HEIGHT, self.background.get_height()):
@@ -164,7 +200,9 @@ class Game:
 
         self.all_sprites.draw(self.screen)
         self.bullets.draw(self.screen)
+        self.exp.draw(self.screen)  # Dodajemy rysowanie obiektów doświadczenia
         self.draw_time()
+        self.draw_xp()
         pygame.display.flip()
 
     def quit(self):

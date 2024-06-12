@@ -36,7 +36,7 @@ class Bullet(pygame.sprite.Sprite):
             if self.rect.bottom < 0:
                 self.kill()
 class OrbitingBullet(pygame.sprite.Sprite):
-    def __init__(self, character, radius, angle_speed, damage=10):
+    def __init__(self, character, radius, angle_speed, damage=5000):
         super().__init__()
         image_path = os.path.join('zdjecia', 'zombie.png')
         self.original_image = pygame.image.load(image_path).convert_alpha()
