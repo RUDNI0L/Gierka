@@ -106,7 +106,7 @@ class Game:
             y = random.randint(-50, HEIGHT + 50)
         return Zombie(x, y, self.player, self.player.level)
 
-    def update_spawn_rate_based_on_level(self):
+    def update_spawn_rate_based_on_level(self):#tu zmieniamy w zaleznosci od lvl
         if self.player.level == 1:
             self.enemy_increase_interval = 4
         elif self.player.level == 2:
@@ -197,8 +197,8 @@ class Game:
             self.running = False
 
         self.check_player_level()
-        self.update_spawn_rate_based_on_level()  # Aktualizuj częstotliwość respienia wrogów
-        self.increase_enemies()  # Sprawdź, czy należy zwiększyć ilość wrogów
+        self.update_spawn_rate_based_on_level()  # aktualizacja czestotliwosci
+        self.increase_enemies()  # sprawdza czy nalezy zwiekszycz
 
     def check_player_level(self):
         if self.player.level == 3:

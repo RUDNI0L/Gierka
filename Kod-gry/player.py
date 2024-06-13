@@ -20,6 +20,9 @@ class PlayerBase(pygame.sprite.Sprite):
         self.level = 1
         self.exp_to_next_level = 100  # Initial XP needed for the next level
 
+        self.bullet_damage = 10
+        self.bullet_speed = 60
+
     def gain_exp(self, amount):
         self.exp += amount
         if self.exp >= self.exp_to_next_level:
@@ -33,23 +36,56 @@ class PlayerBase(pygame.sprite.Sprite):
         self.on_level_up()
 
     def on_level_up(self):
-        if self.level == 3:
+        if self.level == 2:
+            self.special_event_2()
+        elif self.level == 3:
             self.special_event_3()
+        elif self.level == 4:
+            self.special_event_4()
+        elif self.level == 5:
+            self.special_event_5()
         elif self.level == 6:
             self.special_event_6()
+        elif self.level == 7:
+            self.special_event_7()
+        elif self.level == 8:
+            self.special_event_8()
         elif self.level == 9:
             self.special_event_9()
         elif self.level == 10:
             self.boss_fight()
 
-    def special_event_3(self):
 
+    def special_event_2(self):
+        self.bullet_damage = 50000
+        pass
+
+    def special_event_3(self): # Example: Change bullet speed and damage
+        self.speed = 10
+        self.bullet_damage = 20
+        self.bullet_speed = 12
         print("3")
 
+    def special_event_4(self):
+        pass
+
+    def special_event_5(self):
+        pass
+
     def special_event_6(self):
+        self.bullet_damage = 40
+        self.bullet_speed = 15
         print("6")
 
+    def special_event_7(self):
+        pass
+
+    def special_event_8(self):
+        pass
+
     def special_event_9(self):
+        self.bullet_damage = 40
+        self.bullet_speed = 18
         print("9")
 
     def boss_fight(self):
@@ -75,9 +111,10 @@ class PlayerBase(pygame.sprite.Sprite):
             self.rect.y -= self.speed
         if keys[pygame.K_DOWN]:
             self.rect.y += self.speed
+
 class Player(PlayerBase):
     def __init__(self, x, y, bullet_group):
-        super().__init__(x, y, max_hp=100,  image_path=os.path.join('zdjecia', 'rycerz.png'))
+        super().__init__(x, y, max_hp=100, image_path=os.path.join('zdjecia', 'rycerz.png'))
         self.bullet_group = bullet_group
         self.last_shot_time = pygame.time.get_ticks()
         self.shoot_cooldown = 500
@@ -123,8 +160,7 @@ class Player(PlayerBase):
         else:
             return
 
-        bullet = Bullet(self.rect.centerx, self.rect.centery, damage=self.damage)
-        bullet.speed = 10
+        bullet = StraightShootingBullet(self.rect.centerx, self.rect.centery, speed=self.bullet_speed, damage=self.bullet_damage)
         bullet.update = lambda: self.update_bullet(bullet, dx, dy)
         self.bullet_group.add(bullet)
 
@@ -140,16 +176,16 @@ class Player2(PlayerBase):
         self.bullet_group = bullet_group
 
     def shoot(self, target):
-        bullet = Bullet(self.rect.centerx, self.rect.centery, target=target)
+        bullet = Bullet(self.rect.centerx, self.rect.centery, target=target, damage=self.bullet_damage, speed=self.bullet_speed)
         self.bullet_group.add(bullet)
 
 class Player3(PlayerBase):
     def __init__(self, x, y, bullet_group):
-        super().__init__(x, y, max_hp=5000,image_path=os.path.join('zdjecia', 'mag.png'))
+        super().__init__(x, y, max_hp=5000, image_path=os.path.join('zdjecia', 'mag.png'))
         self.bullet_group = bullet_group
 
     def create_orbiting_bullet(self):
-        bullet = OrbitingBullet(self, radius=50, angle_speed=5)
+        bullet = Orbitingbullet = OrbitingBullet(self, radius=50, angle_speed=5, damage=self.bullet_damage)
         self.bullet_group.add(bullet)
 
 class Player4(PlayerBase):
@@ -158,5 +194,5 @@ class Player4(PlayerBase):
         self.bullet_group = bullet_group
 
     def shoot(self, target):
-        bullet = Bullet(self.rect.centerx, self.rect.centery, target=target, damage=20)
+        bullet = Bullet(self.rect.centerx, self.rect.centery, target=target, damage=self.bullet_damage, speed=self.bullet_speed)
         self.bullet_group.add(bullet)

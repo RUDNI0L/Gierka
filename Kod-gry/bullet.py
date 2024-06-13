@@ -6,14 +6,14 @@ import math
 pygame.init()
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, target=None, damage=10):
+    def __init__(self, x, y, target=None, damage=10, speed=8):
         super().__init__()
         image_path = os.path.join('zdjecia', 'zombie.png')
         self.original_image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.original_image, (20, 20))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = 8
+        self.speed = speed
         self.target = target
         self.damage = damage
 
@@ -35,6 +35,7 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.y -= self.speed
             if self.rect.bottom < 0:
                 self.kill()
+
 class OrbitingBullet(pygame.sprite.Sprite):
     def __init__(self, character, radius, angle_speed, damage=5000):
         super().__init__()
@@ -68,5 +69,3 @@ class StraightShootingBullet(pygame.sprite.Sprite):
         self.rect.y -= self.speed
         if self.rect.bottom < 0:
             self.kill()
-
-
