@@ -265,7 +265,13 @@ class Game:
         self.exp.draw(self.screen)  # Dodajemy rysowanie obiektów doświadczenia
         self.draw_time()
         self.draw_xp()
+        self.draw_hp_bar(self.player.hp, self.player.max_hp, 10, 80, 200, 20)
         pygame.display.flip()
+
+    def draw_hp_bar(self, hp, max_hp, x, y, width, height):
+        ratio = hp / max_hp
+        pygame.draw.rect(self.screen, (255, 0, 0), (x, y, width, height))
+        pygame.draw.rect(self.screen, (0, 255, 0), (x, y, width * ratio, height))
 
     def quit(self):
         pygame.quit()
