@@ -8,7 +8,7 @@ pygame.init()
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, target=None, damage=10, speed=8):
         super().__init__()
-        image_path = os.path.join('zdjecia', 'zombie.png')
+        image_path = os.path.join('zdjecia/pociski', 'bullet.gif')
         self.original_image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.original_image, (20, 20))
         self.rect = self.image.get_rect()
@@ -39,7 +39,7 @@ class Bullet(pygame.sprite.Sprite):
 class OrbitingBullet(pygame.sprite.Sprite):
     def __init__(self, character, radius, angle_speed, damage=5000):
         super().__init__()
-        image_path = os.path.join('zdjecia', 'zombie.png')
+        image_path = os.path.join('zdjecia/pociski', 'bullet.gif')
         self.original_image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.original_image, (20, 20))
         self.rect = self.image.get_rect()
@@ -57,7 +57,7 @@ class OrbitingBullet(pygame.sprite.Sprite):
 class StraightShootingBullet(pygame.sprite.Sprite):
     def __init__(self, x, y, speed=10, damage=10):
         super().__init__()
-        image_path = os.path.join('zdjecia', 'zombie.png')
+        image_path = os.path.join('zdjecia/pociski', 'bullet.gif')
         self.original_image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.original_image, (20, 20))
         self.rect = self.image.get_rect()

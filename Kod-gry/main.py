@@ -52,7 +52,7 @@ class Game:
         pygame.mixer.music.set_volume(0.01)
         self.play_random_music()
 
-        self.background = pygame.image.load('zdjecia/background.jpg').convert()
+        self.background = pygame.image.load('zdjecia/background.png').convert()
 
         self.last_enemy_increase_time = time.time()
         self.enemy_spawn_interval = 60  # co ile sekund zwiększać liczbę wrogów
@@ -259,7 +259,7 @@ class Game:
         for x in range(0, WIDTH, self.background.get_width()):
             for y in range(0, HEIGHT, self.background.get_height()):
                 self.screen.blit(self.background, (x, y))
-
+        self.player.draw(self.screen)  # Rysowanie animacji dla gracza 1
         self.all_sprites.draw(self.screen)
         self.bullets.draw(self.screen)
         self.exp.draw(self.screen)  # Dodajemy rysowanie obiektów doświadczenia

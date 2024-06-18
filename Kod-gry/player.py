@@ -114,17 +114,52 @@ class PlayerBase(pygame.sprite.Sprite):
 
 class Player(PlayerBase):
     def __init__(self, x, y, bullet_group):
-        super().__init__(x, y, max_hp=100, image_path=os.path.join('zdjecia', 'rycerz.png'))
+        super().__init__(x, y, max_hp=100, image_path='zdjecia/rycerz/right/right1.png')
+        self.walk_right_imgs = [pygame.image.load(f'zdjecia/rycerz/right/right{x}.png').convert_alpha() for x in range(1, 9)]
+        self.walk_left_imgs = [pygame.image.load(f'zdjecia/rycerz/left/left{x}.png').convert_alpha() for x in range(1, 9)]
+        self.direction = 'right'  # Początkowy kierunek animacji
+        self.walk_index = 0  # Indeks aktualnie wyświetlanej klatki animacji
         self.bullet_group = bullet_group
         self.last_shot_time = pygame.time.get_ticks()
         self.shoot_cooldown = 500
         self.default_direction = "up"
+        self.last_hit_time = pygame.time.get_ticks()
+
+    def draw(self, screen):
+        # Wyświetlanie animacji
+        if self.direction == 'right':
+            self.image = self.walk_right_imgs[self.walk_index // 5]
+        elif self.direction == 'left':
+            self.image = self.walk_left_imgs[self.walk_index // 5]
+
+        screen.blit(self.image, self.rect)
+
+    def update(self):
+        # Aktualizacja animacji na podstawie wciśniętych klawiszy
+        keys = pygame.key.get_pressed()
+        moved = False  # Flaga wskazująca, czy gracz się poruszył
+
+        if keys[pygame.K_LEFT]:
+            self.direction = 'left'
+            moved = True
+        elif keys[pygame.K_RIGHT]:
+            self.direction = 'right'
+            moved = True
+
+        # Jeśli gracz się poruszył, zaktualizuj indeks animacji
+        if moved:
+            self.walk_index += 1
+            if self.walk_index >= len(self.walk_right_imgs) * 5:
+                self.walk_index = 0
+        else:
+            self.walk_index = 0  # Zatrzymaj animację gdy gracz stoi w miejscu
+
+        super().update()  # Wywołanie metody update z klasy bazowej
 
     def shoot(self, direction=None):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_shot_time < self.shoot_cooldown:
             return
-
         self.last_shot_time = current_time
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
@@ -172,8 +207,49 @@ class Player(PlayerBase):
 
 class Player2(PlayerBase):
     def __init__(self, x, y, bullet_group):
-        super().__init__(x, y, max_hp=80, image_path=os.path.join('zdjecia', 'lucznik.png'))
+        super().__init__(x, y, max_hp=100, image_path='zdjecia/lucznik/idle.png')
+        self.walk_right_imgs = [pygame.image.load(f'zdjecia/lucznik/right/right{x}.png').convert_alpha() for x in
+                                range(1, 9)]
+        self.walk_left_imgs = [pygame.image.load(f'zdjecia/lucznik/left/left{x}.png').convert_alpha() for x in
+                               range(1, 9)]
+        self.direction = 'right'  # Początkowy kierunek animacji
+        self.walk_index = 0  # Indeks aktualnie wyświetlanej klatki animacji
         self.bullet_group = bullet_group
+        self.last_shot_time = pygame.time.get_ticks()
+        self.shoot_cooldown = 500
+        self.default_direction = "up"
+        self.last_hit_time = pygame.time.get_ticks()
+
+    def draw(self, screen):
+        # Wyświetlanie animacji
+        if self.direction == 'right':
+            self.image = self.walk_right_imgs[self.walk_index // 5]
+        elif self.direction == 'left':
+            self.image = self.walk_left_imgs[self.walk_index // 5]
+
+        screen.blit(self.image, self.rect)
+
+    def update(self):
+        # Aktualizacja animacji na podstawie wciśniętych klawiszy
+        keys = pygame.key.get_pressed()
+        moved = False  # Flaga wskazująca, czy gracz się poruszył
+
+        if keys[pygame.K_LEFT]:
+            self.direction = 'left'
+            moved = True
+        elif keys[pygame.K_RIGHT]:
+            self.direction = 'right'
+            moved = True
+
+        # Jeśli gracz się poruszył, zaktualizuj indeks animacji
+        if moved:
+            self.walk_index += 1
+            if self.walk_index >= len(self.walk_right_imgs) * 5:
+                self.walk_index = 0
+        else:
+            self.walk_index = 0  # Zatrzymaj animację gdy gracz stoi w miejscu
+
+        super().update()  # Wywołanie metody update z klasy bazowej
 
     def shoot(self, target):
         bullet = Bullet(self.rect.centerx, self.rect.centery, target=target, damage=self.bullet_damage, speed=self.bullet_speed)
@@ -181,8 +257,49 @@ class Player2(PlayerBase):
 
 class Player3(PlayerBase):
     def __init__(self, x, y, bullet_group):
-        super().__init__(x, y, max_hp=5000, image_path=os.path.join('zdjecia', 'mag.png'))
+        super().__init__(x, y, max_hp=100, image_path='zdjecia/mag/right/right1.png')
+        self.walk_right_imgs = [pygame.image.load(f'zdjecia/mag/right/right{x}.png').convert_alpha() for x in
+                                range(1, 7)]
+        self.walk_left_imgs = [pygame.image.load(f'zdjecia/mag/left/left{x}.png').convert_alpha() for x in
+                               range(1, 7)]
+        self.direction = 'right'  # Początkowy kierunek animacji
+        self.walk_index = 0  # Indeks aktualnie wyświetlanej klatki animacji
         self.bullet_group = bullet_group
+        self.last_shot_time = pygame.time.get_ticks()
+        self.shoot_cooldown = 500
+        self.default_direction = "up"
+        self.last_hit_time = pygame.time.get_ticks()
+
+    def draw(self, screen):
+        # Wyświetlanie animacji
+        if self.direction == 'right':
+            self.image = self.walk_right_imgs[self.walk_index // 5]
+        elif self.direction == 'left':
+            self.image = self.walk_left_imgs[self.walk_index // 5]
+
+        screen.blit(self.image, self.rect)
+
+    def update(self):
+        # Aktualizacja animacji na podstawie wciśniętych klawiszy
+        keys = pygame.key.get_pressed()
+        moved = False  # Flaga wskazująca, czy gracz się poruszył
+
+        if keys[pygame.K_LEFT]:
+            self.direction = 'left'
+            moved = True
+        elif keys[pygame.K_RIGHT]:
+            self.direction = 'right'
+            moved = True
+
+        # Jeśli gracz się poruszył, zaktualizuj indeks animacji
+        if moved:
+            self.walk_index += 1
+            if self.walk_index >= len(self.walk_right_imgs) * 5:
+                self.walk_index = 0
+        else:
+            self.walk_index = 0  # Zatrzymaj animację gdy gracz stoi w miejscu
+
+        super().update()  # Wywołanie metody update z klasy bazowej
 
     def create_orbiting_bullet(self):
         bullet = Orbitingbullet = OrbitingBullet(self, radius=50, angle_speed=5, damage=self.bullet_damage)
@@ -190,8 +307,49 @@ class Player3(PlayerBase):
 
 class Player4(PlayerBase):
     def __init__(self, x, y, bullet_group):
-        super().__init__(x, y, max_hp=150, image_path=os.path.join('zdjecia', 'wladca.png'))
+        super().__init__(x, y, max_hp=100, image_path='zdjecia/rycerz/right/right1.png')
+        self.walk_right_imgs = [pygame.image.load(f'zdjecia/rycerz/right/right{x}.png').convert_alpha() for x in
+                                range(1, 9)]
+        self.walk_left_imgs = [pygame.image.load(f'zdjecia/rycerz/left/left{x}.png').convert_alpha() for x in
+                               range(1, 9)]
+        self.direction = 'right'  # Początkowy kierunek animacji
+        self.walk_index = 0  # Indeks aktualnie wyświetlanej klatki animacji
         self.bullet_group = bullet_group
+        self.last_shot_time = pygame.time.get_ticks()
+        self.shoot_cooldown = 500
+        self.default_direction = "up"
+        self.last_hit_time = pygame.time.get_ticks()
+
+    def draw(self, screen):
+        # Wyświetlanie animacji
+        if self.direction == 'right':
+            self.image = self.walk_right_imgs[self.walk_index // 5]
+        elif self.direction == 'left':
+            self.image = self.walk_left_imgs[self.walk_index // 5]
+
+        screen.blit(self.image, self.rect)
+
+    def update(self):
+        # Aktualizacja animacji na podstawie wciśniętych klawiszy
+        keys = pygame.key.get_pressed()
+        moved = False  # Flaga wskazująca, czy gracz się poruszył
+
+        if keys[pygame.K_LEFT]:
+            self.direction = 'left'
+            moved = True
+        elif keys[pygame.K_RIGHT]:
+            self.direction = 'right'
+            moved = True
+
+        # Jeśli gracz się poruszył, zaktualizuj indeks animacji
+        if moved:
+            self.walk_index += 1
+            if self.walk_index >= len(self.walk_right_imgs) * 5:
+                self.walk_index = 0
+        else:
+            self.walk_index = 0  # Zatrzymaj animację gdy gracz stoi w miejscu
+
+        super().update()  # Wywołanie metody update z klasy bazowej
 
     def shoot(self, target):
         bullet = Bullet(self.rect.centerx, self.rect.centery, target=target, damage=self.bullet_damage, speed=self.bullet_speed)

@@ -46,13 +46,13 @@ class Skeleton(EnemyBase):
     def __init__(self, x, y, target, level):
         max_hp = 30 + level * 8
         damage = 15 + level * 3
-        super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'rycerz.png'), target=target)
+        super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'zombie.png'), target=target)
 
 class shadow(EnemyBase):
     def __init__(self, x, y, target, level):
         max_hp = 30 + level * 6
         damage = 15 + level * 4
-        super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'rycerz.png'), target=target)
+        super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'zombie.png'), target=target)
 
 class boss(EnemyBase):
     def __init__(self, x, y, target, level):
