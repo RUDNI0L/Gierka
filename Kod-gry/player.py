@@ -146,6 +146,15 @@ class Player(PlayerBase):
             self.direction = 'right'
             moved = True
 
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+
         # Jeśli gracz się poruszył, zaktualizuj indeks animacji
         if moved:
             self.walk_index += 1
@@ -241,6 +250,15 @@ class Player2(PlayerBase):
             self.direction = 'right'
             moved = True
 
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+
         # Jeśli gracz się poruszył, zaktualizuj indeks animacji
         if moved:
             self.walk_index += 1
@@ -291,6 +309,15 @@ class Player3(PlayerBase):
             self.direction = 'right'
             moved = True
 
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+
         # Jeśli gracz się poruszył, zaktualizuj indeks animacji
         if moved:
             self.walk_index += 1
@@ -302,7 +329,7 @@ class Player3(PlayerBase):
         super().update()  # Wywołanie metody update z klasy bazowej
 
     def create_orbiting_bullet(self):
-        bullet = Orbitingbullet = OrbitingBullet(self, radius=50, angle_speed=5, damage=self.bullet_damage)
+        bullet = Orbitingbullet = OrbitingBullet(self, radius=100, angle_speed=5, damage=self.bullet_damage)
         self.bullet_group.add(bullet)
 
 class Player4(PlayerBase):

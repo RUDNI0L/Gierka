@@ -157,7 +157,6 @@ class Game:
                     if self.enemies:
                         target = random.choice(self.enemies.sprites())
                         self.player.shoot(target)
-
         keys = pygame.key.get_pressed()
         if isinstance(self.player, Player):
             if keys[pygame.K_UP]:
