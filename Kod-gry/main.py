@@ -4,7 +4,7 @@ import random
 import time
 from settings import WIDTH, HEIGHT, FPS, BLACK
 from player import Player, Player2, Player3, Player4
-from enemy import Zombie, Skeleton, shadow,boss
+from enemy import Zombie, Skeleton, shadow, boss
 from menu import Menu
 from bullet import Bullet, OrbitingBullet, StraightShootingBullet
 import math
@@ -18,13 +18,14 @@ class Experience(pygame.sprite.Sprite):
         self.image.fill((0, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        self.speed = 0  # Można usunąć, ponieważ nie będziemy używać prędkości
         self.player = player  # Przechowujemy obiekt player
 
     def update(self):
-        # Sprawdzanie kolizji z graczem
         if self.rect.colliderect(self.player.rect):
             self.player.gain_exp(10)
             self.kill()
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -75,13 +76,13 @@ class Game:
         self.all_sprites.add(self.player)
 
         for _ in range(10):
-            enemy = self.spawn_enemy()
+            enemy = self.spawn_enemy(Zombie)
             self.all_sprites.add(enemy)
             self.enemies.add(enemy)
 
         pygame.time.set_timer(SHOOT_EVENT, 1000)
 
-    def spawn_enemy(self):
+    def spawn_enemy(self, enemy_type):
         spawn_position = random.choice(['top', 'bottom', 'left', 'right'])
         if spawn_position == 'top':
             x = random.randint(-50, WIDTH + 50)
@@ -95,9 +96,9 @@ class Game:
         elif spawn_position == 'right':
             x = WIDTH + 50
             y = random.randint(-50, HEIGHT + 50)
-        return Zombie(x, y, self.player, self.player.level)
+        return enemy_type(x, y, self.player, self.player.level)
 
-    def update_spawn_rate_based_on_level(self):#tu zmieniamy w zaleznosci od lvl
+    def update_spawn_rate_based_on_level(self):
         if self.player.level == 1:
             self.enemy_increase_interval = 4
         elif self.player.level == 2:
@@ -120,7 +121,7 @@ class Game:
             if len(self.enemies) < max_enemies:
                 additional_enemies = min(self.enemy_increase_amount, max_enemies - len(self.enemies))
                 for _ in range(additional_enemies):
-                    enemy = self.spawn_enemy()
+                    enemy = self.spawn_enemy(Zombie)
                     self.all_sprites.add(enemy)
                     self.enemies.add(enemy)
 
@@ -207,25 +208,25 @@ class Game:
         if level == 3 and current_special_enemies < max_special_enemies:
             additional_special_enemies = min(5, max_special_enemies - current_special_enemies)
             for _ in range(additional_special_enemies):
-                enemy = Skeleton(random.randint(0, WIDTH), random.randint(0, HEIGHT), self.player, level)
+                enemy = self.spawn_enemy(Skeleton)
                 self.all_sprites.add(enemy)
                 self.enemies.add(enemy)
         elif level == 6 and current_special_enemies < max_special_enemies:
             additional_special_enemies = min(5, max_special_enemies - current_special_enemies)
             for _ in range(additional_special_enemies):
-                enemy = shadow(random.randint(0, WIDTH), random.randint(0, HEIGHT), self.player, level)
+                enemy = self.spawn_enemy(shadow)
                 self.all_sprites.add(enemy)
                 self.enemies.add(enemy)
         elif level == 9 and current_special_enemies < max_special_enemies:
             additional_special_enemies = min(5, max_special_enemies - current_special_enemies)
             for _ in range(additional_special_enemies):
-                enemy = boss(random.randint(0, WIDTH), random.randint(0, HEIGHT), self.player, level)
+                enemy = self.spawn_enemy(boss)
                 self.all_sprites.add(enemy)
                 self.enemies.add(enemy)
 
     def spawn_boss(self):
-        if not any(isinstance(enemy, boss) for enemy in self.enemies):
-            boss_enemy = boss(WIDTH // 2, HEIGHT // 2, self.player)
+        if not any(isinstance(enemy, Boss) for enemy in self.enemies):
+            boss_enemy = self.spawn_enemy(Boss)
             self.all_sprites.add(boss_enemy)
             self.enemies.add(boss_enemy)
 
@@ -273,3 +274,4 @@ if __name__ == "__main__":
     if game.running:
         game.run()
     game.quit()
+
