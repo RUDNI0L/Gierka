@@ -3,6 +3,8 @@ import time
 import pygame
 
 class EnemyBase(pygame.sprite.Sprite):
+    ATTACK_RANGE = 30  # Określ dystans w pikselach
+
     def __init__(self, x, y, max_hp, damage, image_path, target, speed=3, attack_delay=1.0):
         super().__init__()
         self.max_hp = max_hp
@@ -13,12 +15,11 @@ class EnemyBase(pygame.sprite.Sprite):
         self.last_attack_time = time.time()
         self.attack_delay = attack_delay
 
-        # Ładowanie obrazków animacji ruchu
         self.walk_right_imgs = [pygame.image.load(f'{image_path}/right/right{x}.png').convert_alpha() for x in range(1, 8)]
         self.walk_left_imgs = [pygame.image.load(f'{image_path}/left/left{x}.png').convert_alpha() for x in range(1, 8)]
 
-        self.direction = 'left'  # Początkowy kierunek animacji
-        self.walk_index = 0  # Indeks aktualnie wyświetlanej klatki animacji
+        self.direction = 'left'
+        self.walk_index = 0
         self.image = self.walk_left_imgs[self.walk_index // 5]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -28,18 +29,15 @@ class EnemyBase(pygame.sprite.Sprite):
         if direction.length() > 0:
             direction = direction.normalize()
 
-        # Aktualizacja pozycji
         self.rect.x += direction.x * self.speed
         self.rect.y += direction.y * self.speed
 
-        # Ustalanie kierunku animacji
         if abs(direction.x) > abs(direction.y):
             if direction.x > 0:
                 self.direction = 'right'
             else:
                 self.direction = 'left'
 
-        # Aktualizacja animacji
         self.walk_index += 1
         if self.walk_index >= len(self.walk_right_imgs) * 5:
             self.walk_index = 0
@@ -57,10 +55,11 @@ class EnemyBase(pygame.sprite.Sprite):
     def can_attack(self):
         current_time = time.time()
         if current_time - self.last_attack_time >= self.attack_delay:
-            self.last_attack_time = current_time
-            return True
+            distance_to_player = pygame.math.Vector2(self.target.rect.center).distance_to(self.rect.center)
+            if distance_to_player <= self.ATTACK_RANGE:
+                self.last_attack_time = current_time
+                return True
         return False
-
 class Zombie(EnemyBase):
     def __init__(self, x, y, target, level):
         max_hp = 50 + level * 10

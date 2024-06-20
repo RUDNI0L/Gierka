@@ -181,7 +181,7 @@ class Game:
                 hit.take_damage(bullet.damage)
                 bullet.kill()
                 if hit.hp <= 0:  # jak wrog zabity
-                    exp_orb = Experience(hit.rect.centerx, hit.rect.centery, self.player)  # Przekazujemy player
+                    exp_orb = Experience(hit.rect.centerx, hit.rect.centery, self.player)
                     self.all_sprites.add(exp_orb)
                     self.exp.add(exp_orb)
                     hit.kill()
@@ -196,8 +196,8 @@ class Game:
             self.running = False
 
         self.check_player_level()
-        self.update_spawn_rate_based_on_level()  # aktualizacja czestotliwosci
-        self.increase_enemies()  # sprawdza czy nalezy zwiekszycz
+        self.update_spawn_rate_based_on_level()
+        self.increase_enemies()
 
     def check_player_level(self):
         if self.player.level == 3:
