@@ -17,7 +17,7 @@ class PlayerBase(pygame.sprite.Sprite):
         self.speed = 5
 
         self.exp = 0
-        self.level = 1
+        self.level = 9
         self.exp_to_next_level = 100  # Initial XP needed for the next level
 
         self.bullet_damage = 10
@@ -191,22 +191,30 @@ class Player(PlayerBase):
 
         if direction == "up":
             self.last_direction = "up"
-            dx, dy = 0, -1
+            dx1, dy1 = 0, -1
+            dx2, dy2 = 0, 1
         elif direction == "down":
             self.last_direction = "down"
-            dx, dy = 0, 1
+            dx1, dy1 = 0, 1
+            dx2, dy2 = 0, -1
         elif direction == "left":
             self.last_direction = "left"
-            dx, dy = -1, 0
+            dx1, dy1 = -1, 0
+            dx2, dy2 = 1, 0
         elif direction == "right":
             self.last_direction = "right"
-            dx, dy = 1, 0
+            dx1, dy1 = 1, 0
+            dx2, dy2 = -1, 0
         else:
             return
 
-        bullet = StraightShootingBullet(self.rect.centerx, self.rect.centery, speed=self.bullet_speed, damage=self.bullet_damage)
-        bullet.update = lambda: self.update_bullet(bullet, dx, dy)
-        self.bullet_group.add(bullet)
+        bullet1 = StraightShootingBullet(self.rect.centerx, self.rect.centery, speed=self.bullet_speed, damage=self.bullet_damage)
+        bullet1.update = lambda: self.update_bullet(bullet1, dx1, dy1)
+        self.bullet_group.add(bullet1)
+
+        bullet2 = StraightShootingBullet(self.rect.centerx, self.rect.centery, speed=self.bullet_speed, damage=self.bullet_damage)
+        bullet2.update = lambda: self.update_bullet(bullet2, dx2, dy2)
+        self.bullet_group.add(bullet2)
 
     def update_bullet(self, bullet, dx, dy):
         bullet.rect.x += dx * bullet.speed
@@ -275,7 +283,7 @@ class Player2(PlayerBase):
 
 class Player3(PlayerBase):
     def __init__(self, x, y, bullet_group):
-        super().__init__(x, y, max_hp=100, image_path='zdjecia/mag/right/right1.png')
+        super().__init__(x, y, max_hp=50000000000, image_path='zdjecia/mag/right/right1.png')
         self.walk_right_imgs = [pygame.image.load(f'zdjecia/mag/right/right{x}.png').convert_alpha() for x in
                                 range(1, 7)]
         self.walk_left_imgs = [pygame.image.load(f'zdjecia/mag/left/left{x}.png').convert_alpha() for x in

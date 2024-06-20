@@ -60,6 +60,7 @@ class EnemyBase(pygame.sprite.Sprite):
                 self.last_attack_time = current_time
                 return True
         return False
+
 class Zombie(EnemyBase):
     def __init__(self, x, y, target, level):
         max_hp = 50 + level * 10
@@ -79,7 +80,10 @@ class shadow(EnemyBase):
         super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'shadow'), target=target)
 
 class boss(EnemyBase):
-    def __init__(self, x, y, target, level):
-        max_hp = 200 + level * 50
+    def __init__(self, x, y, target, level, scale=1.0):
+        max_hp = 1 + level * 1
         damage = 30 + level * 10
         super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'boss'), target=target)
+        # Skalowanie obrazu bossa
+        self.image = pygame.transform.scale(self.image, (int(self.rect.width * scale), int(self.rect.height * scale)))
+        self.rect = self.image.get_rect(center=(x, y))

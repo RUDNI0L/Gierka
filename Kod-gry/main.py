@@ -23,8 +23,9 @@ class Experience(pygame.sprite.Sprite):
 
     def update(self):
         if self.rect.colliderect(self.player.rect):
-            self.player.gain_exp(10)
-            self.kill()
+            if self.player.level<9:
+                self.player.gain_exp(10)
+                self.kill()
 
 class Game:
     def __init__(self):
@@ -172,11 +173,21 @@ class Game:
             for hit in hits:
                 hit.take_damage(bullet.damage)
                 bullet.kill()
-                if hit.hp <= 0:  # jak wrog zabity
-                    exp_orb = Experience(hit.rect.centerx, hit.rect.centery, self.player)
-                    self.all_sprites.add(exp_orb)
-                    self.exp.add(exp_orb)
-                    hit.kill()
+                if self.player.level<9:
+                    if hit.hp <= 0:  # jak wrog zabity
+                        exp_orb = Experience(hit.rect.centerx, hit.rect.centery, self.player)
+                        self.all_sprites.add(exp_orb)
+                        self.exp.add(exp_orb)
+                        hit.kill()
+                else:  # jeśli poziom >= 9
+                    if hit.hp <= 0:
+                        hit.kill()
+                        if isinstance(hit, boss):
+                            if self.player.level == 9:
+                                self.player.level = 10
+                                self.spawn_boss(scale=3)  # Duży boss
+                            elif self.player.level == 10:
+                                self.end_game()
 
         # kolizja gracz-wrog
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
@@ -187,9 +198,13 @@ class Game:
         if self.player.hp <= 0:
             self.running = False
 
-        self.check_player_level()
+        self.check_player_level()  # Sprawdź poziom gracza po każdej aktualizacji
         self.update_spawn_rate_based_on_level()
-        self.increase_enemies()
+        if self.player.level<9:
+            self.increase_enemies()
+
+    def is_boss_alive(self):
+        return any(isinstance(enemy, boss) for enemy in self.enemies)
 
     def check_player_level(self):
         if self.player.level == 3:
@@ -197,9 +212,20 @@ class Game:
         elif self.player.level == 6:
             self.spawn_special_enemies(level=6)
         elif self.player.level == 9:
-            self.spawn_special_enemies(level=9)
+            if len(self.enemies) == 0:  # Sprawdź, czy wszystkie wrogie jednostki zostały zabite
+                self.spawn_boss(scale=1)  # Mały boss
+                self.enemy_increase_interval = float('inf')  # Zatrzymaj respawn zwykłych wrogów
+
         elif self.player.level == 10:
-            self.spawn_boss()
+            if len(self.enemies) == 0:  # Sprawdź, czy wszystkie wrogie jednostki zostały zabite
+                self.spawn_boss(scale=3)  # Duży boss
+                self.enemy_increase_interval = float('inf')  # Zatrzymaj respawn zwykłych wrogów
+
+    def spawn_boss(self, scale=1.0):
+        if not any(isinstance(enemy, boss) for enemy in self.enemies):
+            boss_enemy = boss(WIDTH // 2, HEIGHT // 2, self.player, self.player.level, scale=scale)
+            self.all_sprites.add(boss_enemy)
+            self.enemies.add(boss_enemy)
 
     def spawn_special_enemies(self, level):
         max_special_enemies = self.player.level * 15  # dostosowaniue
@@ -217,21 +243,6 @@ class Game:
                 enemy = self.spawn_enemy(shadow)
                 self.all_sprites.add(enemy)
                 self.enemies.add(enemy)
-        elif level == 9 and current_special_enemies < max_special_enemies:
-            additional_special_enemies = min(5, max_special_enemies - current_special_enemies)
-            for _ in range(additional_special_enemies):
-                enemy = self.spawn_enemy(boss)
-                self.all_sprites.add(enemy)
-                self.enemies.add(enemy)
-
-    def spawn_boss(self):
-        if not any(isinstance(enemy, Boss) for enemy in self.enemies):
-            boss_enemy = self.spawn_enemy(Boss)
-            self.all_sprites.add(boss_enemy)
-            self.enemies.add(boss_enemy)
-
-    def set_enemy_increase_interval(self, interval):
-        self.enemy_increase_interval = interval
 
     def draw_time(self):
         elapsed_time = int(time.time() - self.start_time)
@@ -274,4 +285,3 @@ if __name__ == "__main__":
     if game.running:
         game.run()
     game.quit()
-
