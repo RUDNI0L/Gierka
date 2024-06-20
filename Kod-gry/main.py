@@ -18,22 +18,13 @@ class Experience(pygame.sprite.Sprite):
         self.image.fill((0, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = 3
         self.player = player  # Przechowujemy obiekt player
 
     def update(self):
-        dir_x = self.player.rect.centerx - self.rect.centerx
-        dir_y = self.player.rect.centery - self.rect.centery
-        distance = math.hypot(dir_x, dir_y)
-        if distance < 5:
+        # Sprawdzanie kolizji z graczem
+        if self.rect.colliderect(self.player.rect):
             self.player.gain_exp(10)
             self.kill()
-        else:
-            dir_x /= distance
-            dir_y /= distance
-            self.rect.x += dir_x * self.speed
-            self.rect.y += dir_y * self.speed
-
 class Game:
     def __init__(self):
         pygame.init()
