@@ -5,7 +5,7 @@ import sys
 import random
 import time
 from settings import WIDTH, HEIGHT, FPS, BLACK, WHITE
-from player import Player, Player2, Player3, Player4
+from player import Player, Player2, Player3
 from enemy import Zombie, Skeleton, shadow, boss
 from menu import Menu
 from bullet import Bullet, OrbitingBullet, StraightShootingBullet
@@ -147,10 +147,6 @@ class Game:
                 if isinstance(self.player, Player3):
                     self.player.create_orbiting_bullet()
                 elif isinstance(self.player, Player2):
-                    if self.enemies:
-                        target = random.choice(self.enemies.sprites())
-                        self.player.shoot(target)
-                elif isinstance(self.player, Player4):
                     if self.enemies:
                         target = random.choice(self.enemies.sprites())
                         self.player.shoot(target)

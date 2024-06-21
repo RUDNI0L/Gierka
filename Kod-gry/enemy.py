@@ -81,7 +81,7 @@ class shadow(EnemyBase):
 
 class boss(EnemyBase):
     def __init__(self, x, y, target, level, scale=1.0):
-        max_hp = 1 + level * 1
+        max_hp = 1000 + level * 10
         damage = 30 + level * 10
         super().__init__(x, y, max_hp=max_hp, damage=damage, image_path=os.path.join('zdjecia', 'boss'), target=target)
         # Skalowanie obrazu bossa

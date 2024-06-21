@@ -2,7 +2,7 @@ import os
 
 import pygame
 from settings import WIDTH,HEIGHT,WHITE,BLACK
-from player import Player, Player2,Player3,Player4
+from player import Player, Player2,Player3
 
 class Menu:
     def __init__(self, game):
@@ -14,7 +14,7 @@ class Menu:
         self.font_highlight = pygame.font.Font(None, 75)
         self.stage = "main"  # "main" lub "character"
         self.menu_items = ["Start", "Exit"]
-        self.character_items = ["Rycerz", "Łucznik", "Mag", "Władca"]
+        self.character_items = ["Rycerz", "Łucznik", "Mag"]
         self.selected_item = 0
         self.background = pygame.image.load('zdjecia/background2.png').convert()
         desired_width, desired_height = self.screen.get_size()
@@ -29,7 +29,6 @@ class Menu:
             pygame.transform.scale(pygame.image.load(os.path.join("zdjecia/rycerz/right", "right1.png")), (50, 80)),
             pygame.transform.scale(pygame.image.load(os.path.join("zdjecia/lucznik", "idle.png")), (100, 100)),
             pygame.transform.scale(pygame.image.load(os.path.join("zdjecia/mag/right", "right1.png")), (100, 100)),
-            pygame.transform.scale(pygame.image.load(os.path.join("zdjecia", "wladca.png")), (64, 64)),
         ]
 
     def run(self):
@@ -89,5 +88,5 @@ class Menu:
                         elif event.key == pygame.K_RIGHT:
                             self.selected_item = (self.selected_item + 1) % len(self.character_items)
                         elif event.key == pygame.K_RETURN:
-                            self.game.character = [Player, Player2, Player3, Player4][self.selected_item]
+                            self.game.character = [Player, Player2, Player3][self.selected_item]
                             self.running = False
