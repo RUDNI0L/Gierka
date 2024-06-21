@@ -254,6 +254,11 @@ class Game:
         text = font.render(f"Time: {elapsed_time}", True, (255, 255, 255))
         self.screen.blit(text, (WIDTH - 150, HEIGHT - 50))
 
+    def draw_boss_hp_bar(self, hp, max_hp, x, y, width, height):
+        ratio = hp / max_hp
+        pygame.draw.rect(self.screen, (255, 0, 0), (x, y, width, height))
+        pygame.draw.rect(self.screen, (0, 255, 0), (x, y, width * ratio, height))
+
     def draw_xp(self):
         font = pygame.font.Font(None, 36)
         xp_text = font.render(f"XP: {self.player.exp}/{self.player.exp_to_next_level}", True, (255, 255, 255))
@@ -272,6 +277,12 @@ class Game:
         self.draw_time()
         self.draw_xp()
         self.draw_hp_bar(self.player.hp, self.player.max_hp, 10, 80, 200, 20)
+
+        # sprawdza czy bos jest i pasek robi
+        boss_enemy = next((enemy for enemy in self.enemies if isinstance(enemy, boss)), None)
+        if boss_enemy:
+            self.draw_boss_hp_bar(boss_enemy.hp, boss_enemy.max_hp, WIDTH // 2 - 150, 10, 300, 20)
+
         pygame.display.flip()
 
     def draw_hp_bar(self, hp, max_hp, x, y, width, height):
