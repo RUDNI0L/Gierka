@@ -16,17 +16,28 @@ SHOOT_EVENT = pygame.USEREVENT + 1
 class Experience(pygame.sprite.Sprite):
     def __init__(self, x, y, player):
         super().__init__()
-        self.image = pygame.Surface((20, 20))
-        self.image.fill((0, 255, 0))
+        self.image = pygame.image.load('zdjecia/exp.gif').convert_alpha()  # Load the image
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = 0  # Można usunąć, ponieważ nie będziemy używać prędkości
-        self.player = player  # Przechowujemy obiekt player
+        self.player = player  # Store the player object
 
     def update(self):
         if self.rect.colliderect(self.player.rect):
             if self.player.level < 9:
                 self.player.gain_exp(10)
+                self.kill()
+
+    class HealthBoost(pygame.sprite.Sprite):
+        def __init__(self, x, y, player):
+            super().__init__()
+            self.image = pygame.image.load('zdjecia/health_boost.png').convert_alpha()  # Load the health boost image
+            self.rect = self.image.get_rect()
+            self.rect.center = (x, y)
+            self.player = player  # Store the player object
+
+        def update(self):
+            if self.rect.colliderect(self.player.rect):
+                self.player.hp = min(self.player.hp + 10, self.player.max_hp)  # Add 10 HP to the player
                 self.kill()
 
 class Game:
@@ -43,7 +54,7 @@ class Game:
 
         pygame.mixer.init()
 
-        self.music_files = ['muzyka/muzyka1.mp3', 'muzyka/muzyka2.mp3', 'muzyka/muzyka3.mp3']
+        self.music_files = ['muzyka/muzyka1.mp3', 'muzyka/muzyka1.mp3', 'muzyka/muzyka1.mp3']
         pygame.mixer.music.set_volume(0.01)
         self.play_random_music()
 
@@ -173,12 +184,18 @@ class Game:
             for hit in hits:
                 hit.take_damage(bullet.damage)
                 bullet.kill()
-                if self.player.level < 9:
-                    if hit.hp <= 0:  # jak wrog zabity
-                        exp_orb = Experience(hit.rect.centerx, hit.rect.centery, self.player)
-                        self.all_sprites.add(exp_orb)
-                        self.exp.add(exp_orb)
-                        hit.kill()
+                if hit.hp <= 0:  # jak wrog zabity
+                    exp_orb = Experience(hit.rect.centerx, hit.rect.centery, self.player)
+                    self.all_sprites.add(exp_orb)
+                    self.exp.add(exp_orb)
+                    hit.kill()
+
+                    # 10% szansy na wypadniecie serca
+                    if random.random() < 0.1:
+                        health_boost = Experience.HealthBoost(hit.rect.centerx, hit.rect.centery, self.player)
+                        self.all_sprites.add(health_boost)
+                        self.exp.add(health_boost)
+
                 else:  # jeśli poziom >= 9
                     if hit.hp <= 0:
                         hit.kill()
@@ -282,9 +299,12 @@ class Game:
         pygame.display.flip()
 
     def draw_hp_bar(self, hp, max_hp, x, y, width, height):
-        ratio = hp / max_hp
-        pygame.draw.rect(self.screen, (255, 0, 0), (x, y, width, height))
-        pygame.draw.rect(self.screen, (0, 255, 0), (x, y, width * ratio, height))
+        fill = (self.player.hp / self.player.max_hp) * width
+        outline_rect = pygame.Rect(10, 80, width, height)
+        fill_rect = pygame.Rect(10, 80, fill, height)
+        pygame.draw.rect(self.screen, (255, 0, 0), fill_rect)
+        pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
+
 
     def game_over_screen(self):
         elapsed_time = int(time.time() - self.start_time)

@@ -16,7 +16,7 @@ class PlayerBase(pygame.sprite.Sprite):
         self.rect.center = (x, y)
         self.speed = 5
         self.exp = 0
-        self.level = 10
+        self.level = 1
         self.exp_to_next_level = 100  # xp potrzebny
         self.bullet_damage = 10
         self.bullet_speed = 30
