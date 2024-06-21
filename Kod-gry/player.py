@@ -15,13 +15,11 @@ class PlayerBase(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = 5
-
         self.exp = 0
-        self.level = 9
-        self.exp_to_next_level = 100  # Initial XP needed for the next level
-
+        self.level = 10
+        self.exp_to_next_level = 100  # xp potrzebny
         self.bullet_damage = 10
-        self.bullet_speed = 60
+        self.bullet_speed = 30
 
     def gain_exp(self, amount):
         self.exp += amount
@@ -60,7 +58,7 @@ class PlayerBase(pygame.sprite.Sprite):
         self.bullet_damage = 50000
         pass
 
-    def special_event_3(self): # Example: Change bullet speed and damage
+    def special_event_3(self): # dmg speed i tak dalej
         self.speed = 10
         self.bullet_damage = 20
         self.bullet_speed = 12

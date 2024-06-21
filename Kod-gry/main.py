@@ -1,8 +1,10 @@
+import os
+
 import pygame
 import sys
 import random
 import time
-from settings import WIDTH, HEIGHT, FPS, BLACK
+from settings import WIDTH, HEIGHT, FPS, BLACK, WHITE
 from player import Player, Player2, Player3, Player4
 from enemy import Zombie, Skeleton, shadow, boss
 from menu import Menu
@@ -23,7 +25,7 @@ class Experience(pygame.sprite.Sprite):
 
     def update(self):
         if self.rect.colliderect(self.player.rect):
-            if self.player.level<9:
+            if self.player.level < 9:
                 self.player.gain_exp(10)
                 self.kill()
 
@@ -34,7 +36,7 @@ class Game:
         pygame.display.set_caption("Vampire Survivors Clone")
         self.clock = pygame.time.Clock()
         self.running = True
-        self.character = Player  # Możesz ustawić domyślną postać tutaj
+        self.character = None  # Możesz ustawić domyślną postać tutaj
 
         self.menu = Menu(self)
         self.menu.run()
@@ -127,13 +129,15 @@ class Game:
                     self.enemies.add(enemy)
 
     def run(self):
+        self.running = True
         while self.running:
             self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
 
-        self.quit()
+        # Show game over screen
+        self.game_over_screen()
 
     def events(self):
         for event in pygame.event.get():
@@ -173,7 +177,7 @@ class Game:
             for hit in hits:
                 hit.take_damage(bullet.damage)
                 bullet.kill()
-                if self.player.level<9:
+                if self.player.level < 9:
                     if hit.hp <= 0:  # jak wrog zabity
                         exp_orb = Experience(hit.rect.centerx, hit.rect.centery, self.player)
                         self.all_sprites.add(exp_orb)
@@ -187,7 +191,7 @@ class Game:
                                 self.player.level = 10
                                 self.spawn_boss(scale=3)  # Duży boss
                             elif self.player.level == 10:
-                                self.end_game()
+                                self.running = False  # Zamiast self.quit() ustawiamy self.running na False, żeby wywołać ekran końcowy
 
         # kolizja gracz-wrog
         hits = pygame.sprite.spritecollide(self.player, self.enemies, False)
@@ -200,7 +204,7 @@ class Game:
 
         self.check_player_level()  # Sprawdź poziom gracza po każdej aktualizacji
         self.update_spawn_rate_based_on_level()
-        if self.player.level<9:
+        if self.player.level < 9:
             self.increase_enemies()
 
     def is_boss_alive(self):
@@ -218,7 +222,7 @@ class Game:
 
         elif self.player.level == 10:
             if len(self.enemies) == 0:  # Sprawdź, czy wszystkie wrogie jednostki zostały zabite
-                self.spawn_boss(scale=3)  # Duży boss
+                self.spawn_boss(scale=2.5)  # Duży boss
                 self.enemy_increase_interval = float('inf')  # Zatrzymaj respawn zwykłych wrogów
 
     def spawn_boss(self, scale=1.0):
@@ -275,13 +279,77 @@ class Game:
         pygame.draw.rect(self.screen, (255, 0, 0), (x, y, width, height))
         pygame.draw.rect(self.screen, (0, 255, 0), (x, y, width * ratio, height))
 
+    def game_over_screen(self):
+        elapsed_time = int(time.time() - self.start_time)
+        font_main = pygame.font.Font(None, 65)
+        font_highlight = pygame.font.Font(None, 75)
+        menu_items = ["Play Again", "Exit"]
+        selected_item = 0
+
+        in_game_over_screen = True
+        while in_game_over_screen:
+            self.screen.fill(BLACK)
+            self.display_text('GAME OVER', font_main, WHITE, self.screen, WIDTH // 2 - 100, HEIGHT // 4)
+            self.display_text(f'Time: {elapsed_time} seconds', font_main, WHITE, self.screen, WIDTH // 2 - 150,
+                              HEIGHT // 3)
+
+            for idx, item in enumerate(menu_items):
+                if idx == selected_item:
+                    text = font_highlight.render(item, True, WHITE)
+                else:
+                    text = font_main.render(item, True, WHITE)
+                self.screen.blit(text, (WIDTH // 2 - 100, HEIGHT // 2 + idx * 100))
+
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        selected_item = (selected_item - 1) % len(menu_items)
+                    elif event.key == pygame.K_DOWN:
+                        selected_item = (selected_item + 1) % len(menu_items)
+                    elif event.key == pygame.K_RETURN:
+                        if selected_item == 0:  # Play Again
+                            in_game_over_screen = False  # Przerwij pętlę game_over_screen
+                            self.reset_game()  # Wywołaj funkcję reset_game
+                        elif selected_item == 1:  # Exit
+                            self.running = False
+                            pygame.quit()
+                            sys.exit()
+
+    def reset_game(self):
+        print("Resetting game")  # Debugging message
+        self.character = None
+        self.all_sprites.empty()
+        self.enemies.empty()
+        self.bullets.empty()
+        self.exp.empty()
+        self.start_time = time.time()
+        self.menu.run()
+        if self.character is not None:
+            self.new_game()
+            self.run()  # Uruchom ponownie grę
+        else:
+            print("Character not selected, returning to menu")  # Debugging message
+
     def quit(self):
         pygame.quit()
         sys.exit()
 
+    @staticmethod
+    def display_text(text, font, color, surface, x, y):
+        textobj = font.render(text, True, color)
+        textrect = textobj.get_rect()
+        textrect.topleft = (x, y)
+        surface.blit(textobj, textrect)
 
 if __name__ == "__main__":
     game = Game()
     if game.running:
         game.run()
     game.quit()
+
